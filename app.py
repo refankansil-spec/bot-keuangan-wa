@@ -65,14 +65,8 @@ def whatsapp_webhook():
     return jsonify({"status": "ignored", "message": "No message text"}), 200
 
   parsed = parse_expense_text(message)
-  if parsed["nominal"] == 0:
-    return (
-        jsonify({
-            "status": "failed",
-            "message": "Nominal tidak terdeteksi dalam pesan",
-        }),
-        400,
-    )
+ if parsed["nominal"] == 0:
+    return jsonify({"replies": [{"message": "Gagal: Nominal tidak terdeteksi dalam pesan"}]}), 200
 
   now = datetime.now()
   timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
@@ -96,10 +90,10 @@ def whatsapp_webhook():
         f" {parsed['description']}\nNominal: Rp"
         f" {parsed['nominal']:,}".replace(",", ".")
     )
-    return jsonify({"status": "success", "reply": response_text}), 200
+    return jsonify({"replies": [{"message": response_text}]}), 200
 
   except Exception as e:
-    return jsonify({"status": "error", "message": str(e)}), 500
+    return jsonify({"replies": [{"message": f"Terjadi kesalahan sistem: {str(e)}"}]}), 200
 
 
 if __name__ == "__main__":

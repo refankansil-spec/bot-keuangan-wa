@@ -1,1 +1,0 @@
-pip install flask gspread oauth2client requests
